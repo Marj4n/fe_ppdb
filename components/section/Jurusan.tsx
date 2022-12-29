@@ -14,7 +14,7 @@ import "swiper/css";
 
 function getWindowDimensions() {
   const hasWindow = typeof window !== "undefined";
-  const width = hasWindow ? window.innerWidth :null;
+  const width = hasWindow ? window.innerWidth : null;
   const height = hasWindow ? window.innerHeight : null;
   return {
     width,
@@ -22,22 +22,22 @@ function getWindowDimensions() {
   };
 }
 
-export function useWindowDimensions() {
-  const [windowDimensions, setWindowDimensions] = useState(
-    getWindowDimensions()
-  );
+// export function useWindowDimensions() {
+//   const [windowDimensions, setWindowDimensions] = useState(
+//     getWindowDimensions()
+//   );
 
-  useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions());
-    }
+//   useEffect(() => {
+//     function handleResize() {
+//       setWindowDimensions(getWindowDimensions());
+//     }
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+//     window.addEventListener("resize", handleResize);
+//     return () => window.removeEventListener("resize", handleResize);
+//   }, []);
 
-  return windowDimensions;
-}
+//   return windowDimensions;
+// }
 
 const JurusanMobile = () => {
   return (
@@ -184,7 +184,7 @@ const JurusanDesktop = () => {
 };
 
 const Jurusan = () => {
-  const { height, width } = useWindowDimensions();
+  // const { height, width } = useWindowDimensions();
   return (
     <Box as="section" id="jurusan" pt={10}>
       <Stack spacing={4}>
@@ -198,7 +198,8 @@ const Jurusan = () => {
         >
           Jurusan 📚
         </Heading>
-        {width >= 500 ? <JurusanDesktop /> : <JurusanMobile />}
+        {/* {width >= 500 ? <JurusanDesktop /> : <JurusanMobile />} */}
+        <JurusanDesktop />
       </Stack>
     </Box>
   );
