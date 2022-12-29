@@ -22,7 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { AiFillEdit, AiOutlineSend } from "react-icons/ai";
 import { motion } from "framer-motion";
-import { useWindowDimensions } from "./Jurusan";
+// import { useWindowDimensions } from "./Jurusan";
 
 const Testimonial = () => {
   const toast = useToast();
@@ -72,7 +72,7 @@ const Testimonial = () => {
 
   const [todos, setTodos] = useState(myTodos);
   const [input, setInput] = useState("");
-  const { height, width } = useWindowDimensions();
+  // const { height, width } = useWindowDimensions();
 
   const removeTodo = (todo: any) => {
     setTodos(todos.filter((t) => t !== todo));
