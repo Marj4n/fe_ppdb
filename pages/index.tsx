@@ -11,7 +11,7 @@ import JurusanCard from "../components/JurusanCard";
 const url = "https://benjamincarlson.io/";
 const title = "PPDB SMK Wikrama Bogor";
 const description =
-  "Developer, creator, writer, and student living and working in CT. Browse Ben's latest projects, experience, blog posts, and statistics.";
+  "PPDB Iya";
 
 export default function Index() {
   return (
