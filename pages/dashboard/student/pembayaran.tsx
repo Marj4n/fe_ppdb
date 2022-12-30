@@ -37,6 +37,8 @@ type User = {
   email: string;
   role: string;
   id: number;
+  pembayaran: string;
+  tervalidasi: string;
 };
 
 const pembayaran = () => {
@@ -50,49 +52,44 @@ const pembayaran = () => {
   const [foto, setFoto] = React.useState("");
   const [validation, setValidation] = React.useState<any>({});
   const [loadingSubmit, setLoadingSubmit] = React.useState(false);
-  // const [pendaftaran, setPendaftaran] = React.useState("");
 
   React.useEffect(() => {
     if (token) {
-      fetchData()
-        .then(() => {
-          // fetchPendaftaran();
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      fetchData().finally(() => {
+        setLoading(false);
+      });
     } else {
       setLoading(false);
     }
   }, []);
 
-  const handleFileChange = (e: any) => {
-    //define variable for get value image data
-    const imageData = e.target.files[0];
-    // //assign file to state "image"
-    setFoto(imageData);
-  };
-
   const pembayaranHandler = async (e: any) => {
-    console.log(foto);
     e.preventDefault();
     setLoadingSubmit(true);
 
     const id = user?.id;
 
+    const formData = new FormData();
+    formData.append("nama_bank", namaBank);
+    formData.append("pemilik_rekening", pemilikRekening);
+    formData.append("nominal", nominal);
+    formData.append("foto", foto);
+    formData.append("_method", "PATCH");
+
     await axios
-      .patch(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/pendaftaran/${id}`, {
-        nama_bank: namaBank,
-        pemilik_rekening: pemilikRekening,
-        nominal: nominal,
-        foto: foto,
-      })
+      .post(
+        `${process.env.NEXT_PUBLIC_API_BACKEND}/api/pendaftaran/${id}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      )
       .then((response) => {
         console.log(response);
+        fetchData();
       })
       .catch((error) => {
         setValidation(error.response.data);
-        // console.log(error);
       })
       .finally(() => {
         setLoadingSubmit(false);
@@ -108,14 +105,6 @@ const pembayaran = () => {
         setUser(response.data);
       });
   };
-
-  // const fetchPendaftaran = async () => {
-  //   await axios
-  //     .get(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/pendaftaran/${user?.id}`)
-  //     .then((response) => {
-  //       setPendaftaran(response.data);
-  //     });
-  // };
 
   const handleLogout = () => {
     setLoading(true);
@@ -219,136 +208,155 @@ const pembayaran = () => {
                     borderRadius={10}
                     boxShadow={boxShadowColor[colorMode]}
                   >
-                    <Stack p={5} color={"white"}>
-                      <Text fontSize="lg" fontWeight="bold">
-                        Form Pembayaran
-                      </Text>
-                      <form onSubmit={pembayaranHandler}>
-                        <Stack spacing={4}>
-                          <Flex gap={8}>
+                    {user?.pembayaran ? (
+                      <Box p={10} bg="white">
+                        {user?.tervalidasi ? (
+                          <Text fontSize="lg" color="black">
+                            Selamat anda di terima di SMK Wikrama
+                          </Text>
+                        ) : (
+                          <Text fontSize="lg" color="black">
+                            tunggu validasi dari admin
+                          </Text>
+                        )}
+                      </Box>
+                    ) : (
+                      <Stack p={5} color={"white"}>
+                        <Text fontSize="lg" fontWeight="bold">
+                          Form Pembayaran
+                        </Text>
+                        <form onSubmit={pembayaranHandler}>
+                          <Stack spacing={4}>
+                            <Flex gap={8}>
+                              <FormControl>
+                                <FormLabel>Nama Bank</FormLabel>
+                                <Select
+                                  borderColor="gray.600"
+                                  _hover={{ borderColor: "gray.600" }}
+                                  onChange={(event) =>
+                                    setNamaBank(event.target.value)
+                                  }
+                                  placeholder="Pilih Bank"
+                                >
+                                  <option value="BANK MANDIRI">
+                                    BANK MANDIRI
+                                  </option>
+                                  <option value="BANK CENTRAL ASIA">
+                                    BANK CENTRAL ASIA
+                                  </option>
+                                  <option value="BANK RAKYAT INDONESIA">
+                                    BANK RAKYAT INDONESIA
+                                  </option>
+                                </Select>
+                                {validation.nama_bank && (
+                                  <Alert variant="left-accent" status="error">
+                                    <AlertIcon />
+                                    {validation.nama_bank[0]}
+                                  </Alert>
+                                )}
+                              </FormControl>
+                              <FormControl>
+                                <FormLabel>Nama Pemilik Rekening</FormLabel>
+                                <Input
+                                  type="text"
+                                  borderColor="gray.600"
+                                  _hover={{ borderColor: "gray.600" }}
+                                  onChange={(event) =>
+                                    setPemilikRekening(event.target.value)
+                                  }
+                                />
+                                {validation.pemilik_rekening && (
+                                  <Alert variant="left-accent" status="error">
+                                    <AlertIcon />
+                                    {validation.pemilik_rekening[0]}
+                                  </Alert>
+                                )}
+                              </FormControl>
+                              <FormControl>
+                                <FormLabel>Nominal</FormLabel>
+                                <Input
+                                  type="text"
+                                  borderColor="gray.600"
+                                  _hover={{ borderColor: "gray.600" }}
+                                  onChange={(event) =>
+                                    setNominal(event.target.value)
+                                  }
+                                />
+                                {validation.nominal && (
+                                  <Alert variant="left-accent" status="error">
+                                    <AlertIcon />
+                                    {validation.nominal[0]}
+                                  </Alert>
+                                )}
+                              </FormControl>
+                            </Flex>
                             <FormControl>
-                              <FormLabel>Nama Bank</FormLabel>
-                              <Select
-                                borderColor="gray.600"
-                                _hover={{ borderColor: "gray.600" }}
-                                onChange={(event) =>
-                                  setNamaBank(event.target.value)
-                                }
-                                placeholder="Pilih Bank"
+                              <FormLabel htmlFor="writeUpFile">
+                                Bukti Pembayaran
+                              </FormLabel>
+                              <InputGroup>
+                                <InputLeftElement
+                                  pointerEvents="none"
+                                  children={<Icon as={AiFillFile} />}
+                                />
+                                <Input
+                                  placeholder={"Foto"}
+                                  type="file"
+                                  pt={1}
+                                  onChange={(event: any) => {
+                                    const imageData = event.target.files[0];
+                                    setFoto(imageData);
+                                  }}
+                                />
+                                {validation.foto && (
+                                  <Alert variant="left-accent" status="error">
+                                    <AlertIcon />
+                                    {validation.foto[0]}
+                                  </Alert>
+                                )}
+                              </InputGroup>
+                            </FormControl>
+                            {loadingSubmit ? (
+                              <Button
+                                w={40}
+                                bgColor={useColorModeValue(
+                                  "blue.400",
+                                  "blue.700"
+                                )}
+                                _hover={{
+                                  bgColor: useColorModeValue(
+                                    "blue.400",
+                                    "blue.500"
+                                  ),
+                                }}
+                                type="submit"
+                                isLoading
+                                loadingText="Uploading"
                               >
-                                <option value="option1">BANK MANDIRI</option>
-                                <option value="option2">
-                                  BANK CENTRAL ASIA
-                                </option>
-                                <option value="option3">
-                                  BANK RAKYAT INDONESIA
-                                </option>
-                              </Select>
-                              {validation.nama_bank && (
-                                <Alert variant="left-accent" status="error">
-                                  <AlertIcon />
-                                  {validation.nama_bank[0]}
-                                </Alert>
-                              )}
-                            </FormControl>
-                            <FormControl>
-                              <FormLabel>Nama Pemilik Rekening</FormLabel>
-                              <Input
-                                type="text"
-                                borderColor="gray.600"
-                                _hover={{ borderColor: "gray.600" }}
-                                onChange={(event) =>
-                                  setPemilikRekening(event.target.value)
-                                }
-                              />
-                              {validation.pemilik_rekening && (
-                                <Alert variant="left-accent" status="error">
-                                  <AlertIcon />
-                                  {validation.pemilik_rekening[0]}
-                                </Alert>
-                              )}
-                            </FormControl>
-                            <FormControl>
-                              <FormLabel>Nominal</FormLabel>
-                              <Input
-                                type="text"
-                                borderColor="gray.600"
-                                _hover={{ borderColor: "gray.600" }}
-                                onChange={(event) =>
-                                  setNominal(event.target.value)
-                                }
-                              />
-                              {validation.nominal && (
-                                <Alert variant="left-accent" status="error">
-                                  <AlertIcon />
-                                  {validation.nominal[0]}
-                                </Alert>
-                              )}
-                            </FormControl>
-                          </Flex>
-                          <FormControl>
-                            <FormLabel htmlFor="writeUpFile">
-                              Bukti Pembayaran
-                            </FormLabel>
-                            <InputGroup>
-                              <InputLeftElement
-                                pointerEvents="none"
-                                children={<Icon as={AiFillFile} />}
-                              />
-                              <Input
-                                placeholder={"Foto"}
-                                type="file"
-                                pt={1}
-                                onChange={handleFileChange}
-                              />
-                              {validation.foto && (
-                                <Alert variant="left-accent" status="error">
-                                  <AlertIcon />
-                                  {validation.foto[0]}
-                                </Alert>
-                              )}
-                            </InputGroup>
-                          </FormControl>
-                          {loadingSubmit ? (
-                            <Button
-                              w={40}
-                              bgColor={useColorModeValue(
-                                "blue.400",
-                                "blue.700"
-                              )}
-                              _hover={{
-                                bgColor: useColorModeValue(
+                                Upload
+                              </Button>
+                            ) : (
+                              <Button
+                                w={40}
+                                bgColor={useColorModeValue(
                                   "blue.400",
-                                  "blue.500"
-                                ),
-                              }}
-                              type="submit"
-                              isLoading
-                              loadingText="Uploading"
-                            >
-                              Upload
-                            </Button>
-                          ) : (
-                            <Button
-                              w={40}
-                              bgColor={useColorModeValue(
-                                "blue.400",
-                                "blue.700"
-                              )}
-                              _hover={{
-                                bgColor: useColorModeValue(
-                                  "blue.400",
-                                  "blue.500"
-                                ),
-                              }}
-                              type="submit"
-                            >
-                              Upload
-                            </Button>
-                          )}
-                        </Stack>
-                      </form>
-                    </Stack>
+                                  "blue.700"
+                                )}
+                                _hover={{
+                                  bgColor: useColorModeValue(
+                                    "blue.400",
+                                    "blue.500"
+                                  ),
+                                }}
+                                type="submit"
+                              >
+                                Upload
+                              </Button>
+                            )}
+                          </Stack>
+                        </form>
+                      </Stack>
+                    )}
                   </Box>
                 </Stack>
               </Box>

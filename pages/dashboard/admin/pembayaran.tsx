@@ -156,26 +156,29 @@ const pembayaran = () => {
   const handleTervalidasiDiterima = (id: number) => {
     axios
       .post(
-        `${process.env.NEXT_PUBLIC_API_BACKEND}/pendaftaran/validasi/${id}`,
+        `${process.env.NEXT_PUBLIC_API_BACKEND}/api/pendaftaran/validasi/${id}`,
         {
           tervalidasi: "diterima",
           _method: "PATCH",
         }
       )
       .then((response) => {
-        console.log(response);
-      })
-      .finally();
+        fetchData();
+      });
   };
 
   const handleTervalidasiDitolak = (id: number) => {
-    axios.post(
-      `${process.env.NEXT_PUBLIC_API_BACKEND}/pendaftaran/validasi/${id}`,
-      {
-        tervalidasi: "ditolak",
-        _method: "PATCH",
-      }
-    );
+    axios
+      .post(
+        `${process.env.NEXT_PUBLIC_API_BACKEND}/api/pendaftaran/validasi/${id}`,
+        {
+          tervalidasi: "ditolak",
+          _method: "PATCH",
+        }
+      )
+      .then((response) => {
+        fetchData();
+      });
   };
 
   return (
@@ -392,26 +395,36 @@ const pembayaran = () => {
                               <Flex gap={2}>
                                 {pembayaran.foto ? (
                                   <>
-                                    <Button
-                                      variant="solid"
-                                      colorScheme="green"
-                                      onClick={() => {
-                                        handleTervalidasiDiterima(
-                                          pembayaran.id
-                                        );
-                                      }}
-                                    >
-                                      Validasi
-                                    </Button>
-                                    <Button
-                                      variant="solid"
-                                      colorScheme="red"
-                                      onClick={() => {
-                                        handleTervalidasiDitolak(pembayaran.id);
-                                      }}
-                                    >
-                                      Tolak
-                                    </Button>
+                                    {pembayaran.tervalidasi == "diterima" ? (
+                                      <>Diterima</>
+                                    ) : pembayaran.tervalidasi == "ditolak" ? (
+                                      <>Ditolak</>
+                                    ) : (
+                                      <>
+                                        <Button
+                                          variant="solid"
+                                          colorScheme="green"
+                                          onClick={() => {
+                                            handleTervalidasiDiterima(
+                                              pembayaran.id
+                                            );
+                                          }}
+                                        >
+                                          Validasi
+                                        </Button>
+                                        <Button
+                                          variant="solid"
+                                          colorScheme="red"
+                                          onClick={() => {
+                                            handleTervalidasiDitolak(
+                                              pembayaran.id
+                                            );
+                                          }}
+                                        >
+                                          Tolak
+                                        </Button>
+                                      </>
+                                    )}
                                   </>
                                 ) : (
                                   "Tidak ada bukti pembayaran"
