@@ -57,6 +57,7 @@ const RegisterPage = () => {
         pilih_referensi: pilihReferensi,
       })
       .then((response) => {
+        console.log(response);
         setValidation("");
         setNisn("");
         setJenisKelamin("");
@@ -83,9 +84,8 @@ const RegisterPage = () => {
           position: "top",
         });
       })
-      .catch((error) => {
+      .catch((error: any) => {
         setValidation(error.response.data);
-        // console.log(error);
       })
       .finally(() => {
         setLoading(false);
@@ -192,8 +192,16 @@ const RegisterPage = () => {
                         setSelectedOption(event.target.value)
                       }
                     >
-                      <option value="SMP Ngawi">SMP Ngawi</option>
-                      <option value="SMP OPM">SMP OPM</option>
+                      <option value="MTs AL ASMAAUL HUSNA">
+                        MTs AL ASMAAUL HUSNA
+                      </option>
+                      <option value="MTs Ar-Rasyidy">MTs Ar-Rasyidy</option>
+                      <option value="MTs AR-ROZZAAQ">MTs AR-ROZZAAQ</option>
+                      <option value="MTs Assalaam">MTs Assalaam</option>
+                      <option value="MTs Balighul Hikmah">
+                        MTs Balighul Hikmah
+                      </option>
+                      <option value="MTs Assa'adah">MTs Assa'adah</option>
                       <option value="other">Lainnya</option>
                     </Select>
                     {selectedOption !== "other" && validation.asal_sekolah && (

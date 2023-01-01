@@ -52,6 +52,7 @@ const pembayaran = () => {
   const [foto, setFoto] = React.useState("");
   const [validation, setValidation] = React.useState<any>({});
   const [loadingSubmit, setLoadingSubmit] = React.useState(false);
+  const [selectedOption, setSelectedOption] = React.useState("");
 
   React.useEffect(() => {
     if (token) {
@@ -234,7 +235,7 @@ const pembayaran = () => {
                                   borderColor="gray.600"
                                   _hover={{ borderColor: "gray.600" }}
                                   onChange={(event) =>
-                                    setNamaBank(event.target.value)
+                                    setSelectedOption(event.target.value)
                                   }
                                   placeholder="Pilih Bank"
                                 >
@@ -247,14 +248,36 @@ const pembayaran = () => {
                                   <option value="BANK RAKYAT INDONESIA">
                                     BANK RAKYAT INDONESIA
                                   </option>
+                                  <option value="other">Lainnya</option>
                                 </Select>
-                                {validation.nama_bank && (
-                                  <Alert variant="left-accent" status="error">
-                                    <AlertIcon />
-                                    {validation.nama_bank[0]}
-                                  </Alert>
-                                )}
+                                {selectedOption !== "other" &&
+                                  validation.nama_bank && (
+                                    <Alert variant="left-accent" status="error">
+                                      <AlertIcon />
+                                      {validation.nama_bank[0]}
+                                    </Alert>
+                                  )}
                               </FormControl>
+                              {selectedOption === "other" && (
+                                <FormControl id="asalSekolah">
+                                  <FormLabel>Masukan Nama Bank</FormLabel>
+                                  <Input
+                                    type="text"
+                                    borderColor="gray.600"
+                                    _hover={{ borderColor: "gray.600" }}
+                                    value={namaBank}
+                                    onChange={(event) =>
+                                      setNamaBank(event.target.value)
+                                    }
+                                  ></Input>
+                                  {validation.nama_bank && (
+                                    <Alert variant="left-accent" status="error">
+                                      <AlertIcon />
+                                      {validation.nama_bank[0]}
+                                    </Alert>
+                                  )}
+                                </FormControl>
+                              )}
                               <FormControl>
                                 <FormLabel>Nama Pemilik Rekening</FormLabel>
                                 <Input
